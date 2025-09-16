@@ -3,8 +3,8 @@
 int main() {
     long long k, a, p1;
     std::cout << "Введите k: ";
-    if (!(std::cin >> k) || k < 0) {
-        std::cerr << "Ошибка: введено другое число!" ;
+    if (!(std::cin >> k) || k < 1) {
+        std::cerr << "Ошибка: введите другое число!" ;
         return 1;
     }
     if (k % 2 == 0) {

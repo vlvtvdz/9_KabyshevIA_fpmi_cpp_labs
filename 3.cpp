@@ -1,11 +1,11 @@
 #include <iostream>
 int main() {
-    int a, n, s;
+    
 
-    long long k, a, p1;
+    long long a, n, s;;
     std::cout << "Введите k: ";
-    if (!(std::cin >> k) || k < 0) {
-        std::cerr << "Ошибка: введено другое число!" ;
+    if (!(std::cin >> n) || n < 1) {
+        std::cerr << "Ошибка: введите другое число!" ;
         return 1;
     }
 
