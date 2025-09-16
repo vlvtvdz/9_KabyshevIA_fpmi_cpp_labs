@@ -1,13 +1,16 @@
 #include <iostream>
-using namespace std;
 int main ()
 {
     int a, n, c, d;
-    cout << "Введите конечный член промежутка ";
-    cin >>n;
+    long long k, a, p1;
+    std::cout << "Введите k: ";
+    if (!(std::cin >> k) || k < 0) {
+        std::cerr << "Ошибка: введено другое число!" ;
+        return 1;
+    }
     while (n <= 2) {
-        cout << "Введите число больше 1 ";
-        cin >>n;
+        std::cout << "Введите число больше 1 ";
+        std::cin >>n;
     }
     if (n > 2){
         a = 1; 
@@ -22,8 +25,8 @@ int main ()
             }
             a += 1;
          }
-        cout << c << " Сумма четных ";
-        cout << d << " Произведение нечетных ";
+        std::cout << c << " Сумма четных ";
+        std::cout << d << " Произведение нечетных ";
     }
     return 0;
 }

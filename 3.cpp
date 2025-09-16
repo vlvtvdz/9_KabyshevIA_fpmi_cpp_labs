@@ -2,10 +2,11 @@
 int main() {
     int a, n, s;
 
-    std::cout << "Введите n: ";
-    if (!(std::cin >> n)) {
-        std::cerr << "Ошибка: введено не число!" << std::endl;
-        return 1; 
+    long long k, a, p1;
+    std::cout << "Введите k: ";
+    if (!(std::cin >> k) || k < 0) {
+        std::cerr << "Ошибка: введено другое число!" ;
+        return 1;
     }
 
     s = 0;
