@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/ivan/c++/labs/4'
+relocations:     []
+...
