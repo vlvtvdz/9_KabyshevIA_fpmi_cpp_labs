@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-using namespace std;
 
 int gcd(int a, int b) {
     while (b != 0) {
@@ -13,18 +12,18 @@ int gcd(int a, int b) {
 
 int main() {
     int a, b;
-    cout << "Введите два числа: ";
-    cin >> a >> b;
+    std::cout << "Введите два числа: ";
+    std::cin >> a >> b;
 
     int g = gcd(a, b);
 
-    cout << "Общие делители: ";
+    std::cout << "Общие делители: ";
     for (int i = 1; i <= g; i++) {
         if (g % i == 0) {
-            cout << i << " ";
+            std::cout << i << " ";
         }
     }
-    cout << endl;
+    std::cout << std::endl;
 
     return 0;
 }
