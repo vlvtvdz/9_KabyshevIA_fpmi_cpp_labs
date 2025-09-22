@@ -17,7 +17,7 @@ int main() {
         std::cout << "Try again...." << std::endl;
     }
     else {
-        std::cout << "Shit, you broke my program :(" << std::endl;
+        std::cout << "Shit, you broke my program :(" << std::endl; // надо ввести -2147483648 потому что это нижняя шраница для int
         exit(1);
         }
 return 0;
