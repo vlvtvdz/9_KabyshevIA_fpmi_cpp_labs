@@ -1,5 +1,10 @@
 #include <iostream>
 #include <array>
+
+int myAbs(int x) {
+    return (x < 0) ? -x : x;
+}
+
 int main () {
 
     long long a, n, v;
@@ -40,35 +45,88 @@ int main () {
         std::cerr << "Ошибка: v может быть только 1 или 2!" << std::endl;
         return 1;
     }
-    int* mass = new int[a];
 
-    std::cout << "Введите данные в массив ";
-    for (int i = 0; i < a; ++i) {
-        std::cin >> mass[i];
-    }
-    
-    int min = mass[0];
-    int max = mass[0];
-    int p = 1;
-    
-    for (int i = 0; i < a; ++i ) {
-        if (mass[i] < min) {
-            min = mass[i];
+    if (v = 1) {
+        int* mass = new int[a];
+
+        std::cout << "Введите данные в массив ";
+        for (int i = 0; i < a; ++i) {
+            std::cin >> mass[i];
         }
 
-        if (mass[i] > max){
-            max = mass[i];
-        }
-    }
+        int min = mass[0];
+        int max = mass[0];
+        int p = 1;
+        
+        for (int i = 0; i < a; ++i ) {
+            if (mass[i] < min) {
+                min = mass[i];
+            }
 
-    for (int i = 0; i < a; ++i) {
-        if (mass[i] != min && mass[i] != max) {
-            p *= mass[i];
+            if (mass[i] > max){
+                max = mass[i];
+            }
         }
-    }
 
-    std::cout << p << " Произведение всех элементов массива между минимальным и максимальными членами";
-    delete[] mass;
+        for (int i = 0; i < a; ++i) {
+            if (mass[i] != min && mass[i] != max) {
+                p *= mass[i];
+            }
+        }
+
+        for (int pass = 0; pass < 100 - 1; pass++) {
+            for (int i = 0; i < 100 - 1; i++) {
+                if (myAbs(mass[i]) > myAbs(mass[i + 1])) {
+                    int temp = mass[i];
+                    mass[i] = mass[i + 1];
+                    mass [i + 1] = temp;
+                }
+            }
+        }
+
+        std::cout << p << " = Произведение всех элементов массива между минимальным и максимальными членами";
+        delete[] mass;
+    }
+    else {
+        long long mass[100];
+
+        std::cout << "Введите данные в массив ";
+        for (int i = 0; i < 100; ++i) {
+            std::cin >> mass[i];
+        }
+
+        int min = mass[0];
+        int max = mass[0];
+        int p = 1;
+        
+        for (int i = 0; i < 100; ++i ) {
+            if (mass[i] < min) {
+                min = mass[i];
+            }
+
+            if (mass[i] > max){
+                max = mass[i];
+            }
+        }
+
+        for (int i = 0; i < 100; ++i) {
+            if (mass[i] != min && mass[i] != max) {
+                p *= mass[i];
+            }
+        }
+
+        for (int pass = 0; pass < 100 - 1; pass++) {
+            for (int i = 0; i < 100 - 1; i++) {
+                if (myAbs(mass[i]) > myAbs(mass[i + 1])) {
+                    int temp = mass[i];
+                    mass[i] = mass[i + 1];
+                    mass [i + 1] = temp;
+                }
+            }
+        }
+
+        std::cout << p << " = Произведение всех элементов массива между минимальным и максимальными членами";
+    }
 
     return 0;
 }
