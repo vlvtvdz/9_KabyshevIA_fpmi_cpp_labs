@@ -105,13 +105,14 @@ int main () {
                 }
             }
             for (int j = minIndex; j < a - 1; j++) {
-            mass[j] = mass[j + 1];
+                mass[j] = mass[j + 1];
             }
             a--;
-            for (int i = 0; i < a; ++i) {
+            
+        }
+        for (int i = 0; i < a; ++i) {
                 std::cout << "Числа в массиве: " << mass[i] << '\n';
-            }
-        }   
+        }
 
         std::cout << p << " = Произведение всех элементов массива между минимальным и максимальными членами";
         delete[] mass;
