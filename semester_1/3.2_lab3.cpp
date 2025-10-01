@@ -1,6 +1,6 @@
 #include <iostream>
+#include <random>
 #include <array>
-#include <random>  
 
 int myAbs(int x) {
     return (x < 0) ? -x : x;
@@ -41,8 +41,9 @@ int main () {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(-100, 100);
 
-        int* mass = new int[a];
-
+        int y = 0;
+        int mass[100];
+        
         int choice;
         std::cout << "Как заполнить массив? (1 - вручную, 2 - случайными числами): ";
         std::cin >> choice;
@@ -75,7 +76,7 @@ int main () {
         else {
             p = 0; 
         }
-
+            
         for (int pass = 0; pass < a - 1; pass++) {
             for (int i = 0; i < a - 1; i++) {
                 if (myAbs(mass[i]) > myAbs(mass[i + 1])) {
@@ -103,9 +104,7 @@ int main () {
                 std::cout << "Числа в массиве: " << mass[i] << '\n';
         }
 
-        std::cout << p << " = Произведение всех элементов массива между минимальным и максимальными членами";
-        delete[] mass;
-    
-
-    return 0;
+        std::cout << "\n"<< p << " = Произведение всех элементов массива между минимальным и максимальными членами";
+        return 0;
 }
+    
