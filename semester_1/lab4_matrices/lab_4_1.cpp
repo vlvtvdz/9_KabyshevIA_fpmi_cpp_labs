@@ -1,6 +1,6 @@
 #include <iostream>
-void AllocateMatrix (int n, int colum) {
-    int** matrix = new int* [n];
+void AllocateMatrix (int n, int colum, int** matrix) {
+    matrix = new int* [n];
     for (int row = 0; row < n; ++row) {
         matrix [row] = new int [colum];
 
