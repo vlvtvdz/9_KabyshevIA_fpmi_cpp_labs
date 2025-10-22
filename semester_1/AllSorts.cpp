@@ -62,13 +62,21 @@ void ArrayToMatrix(int** matrix, int* arr, int row, int colum) {
     }
 }
 
+bool compareAscending(int x, int y) {
+    return x < y;
+}
+
+bool compareDecending(int x, int y) {
+    return x > y;
+}
+
 // Сортировка вставками
-void InsertionSort(int* arr, int total) {
+void InsertionSort(int* arr, int total) { // InsertionSort(int* arr, int total, bool (*comp)(int, int))
     for (int i = 1; i < total; ++i) {
         int key = arr[i];
         int j = i - 1;
 
-        while (j >= 0 && arr[j] > key) {
+        while (j >= 0 && arr[j] > key) { // arr[j] > key -> comp(arr[j], key)
             arr[j + 1] = arr[j];
             --j;
         }
@@ -76,17 +84,27 @@ void InsertionSort(int* arr, int total) {
     }
 }
 
-void QuickSort (int** arr) {
-    int left = 0;
-    int middle = sizeof(arr) / 8 ;
-    int right = sizeof(arr) - 1;
+// Функция быстрой сортировки (рекурсивная)
+void quicksort(int* arr, int left, int right) {
+    int i = 0;
+    int j = right;
+    int middle = arr[(left + right) / 2]; // опорный элемент
 
-    if (left < right) {
-        while (left < middle) {
-            
+    while (i <= j) {
+        while (arr[i] < middle) i++;
+        while (arr[j] > middle) j--;
+
+        if (i <= j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
         }
     }
 
+    if (left < j) quicksort(arr, left, j);
+    if (i < right) quicksort(arr, i, right);
 }
 
 // Основная функция сортировки матрицы 
@@ -95,6 +113,16 @@ void SortMatrixByInsertion(int** matrix, int row, int colum) {
     int* arr = MatrixToArray(matrix, row, colum);
 
     InsertionSort(arr, total);
+
+    ArrayToMatrix(matrix, arr, row, colum);
+    delete[] arr;
+}
+
+void QuickSortMatrix(int** matrix, int row, int colum) {
+    int total = row * colum;
+    int* arr = MatrixToArray(matrix, row, colum);
+
+    quicksort(arr, 0, total - 1);
 
     ArrayToMatrix(matrix, arr, row, colum);
     delete[] arr;
@@ -118,6 +146,8 @@ int main() {
 
     std::cout << "\nМатрица после сортировки вставками:";
     PrintMatrix(matrix, row, colum);
+
+    quicksort()
 
     DeleteMemory(matrix, row);
     return 0;
