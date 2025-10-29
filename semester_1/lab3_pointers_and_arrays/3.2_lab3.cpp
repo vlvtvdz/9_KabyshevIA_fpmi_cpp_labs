@@ -7,7 +7,7 @@ int myAbs(int x) {
 }
 
 // Ввод положительного числа с проверками
-int InputPositive(const std::string& text, int limit) {
+int InputPositive(const char* text, int limit) {
     long long num;
     std::cout << text;
     if (!(std::cin >> num)) {
@@ -33,18 +33,25 @@ void FillArray(int* mass, int size) {
 
     int choice;
     std::cout << "Как заполнить массив? (1 - вручную, 2 - случайными числами): ";
-    std::cin >> choice;
+    if (!(std::cin >> choice)) {
+        std::cerr << "Ошибка: введено не число!" << std::endl;
+        exit(4);
+    }
 
     if (choice == 1) {
         std::cout << "Введите элементы массива:\n";
-        for (int i = 0; i < size; ++i)
-            std::cin >> mass[i];
+        for (int i = 0; i < size; ++i) {
+            if (!(std::cin >> mass[i])) {
+                std::cerr << "Ошибка: введено не число!" << std::endl;
+                exit(5);
+            }
+        }
     } else if (choice == 2) {
         for (int i = 0; i < size; ++i)
             mass[i] = dist(gen);
     } else {
         std::cerr << "Ошибка: неверный выбор!" << std::endl;
-        exit(4);
+        exit(6);
     }
 }
 
@@ -109,8 +116,8 @@ void PrintArray(int* mass, int size) {
 }
 
 int main() {
-    int n = InputPositive("Введите n: ", 1000000);
-    int a = InputPositive("Введите a: ", 1000000);
+    int n = InputPositive("Введите количество минимальных элементов которое надо удалить: ", 1000000);
+    int a = InputPositive("Введите длинну массива: ", 1000000);
 
     int* mass = new int[a];
 
