@@ -1,134 +1,173 @@
 #include <iostream>
 #include <random>
+#include <string>
 
-// Абсолютное значение
+int myAbs(int x);
+
+int InputPositive(const char* text, int limit);
+
+void FillArray(int* arr, int size);
+
+void PrintArray(int* arr, int size);
+
+void FindMinMaxIndexes(int* arr, int size, int& minIndex, int& maxIndex);
+
+int ProductBetweenMinMax(int* arr, int size);
+
+void RemoveNMinElements(int* arr, int& size, int n);
+
+void SortByAbs(int* arr, int size);
+
+const int MAX_SIZE = 1000; // ограничение для статического массива
+
+
+int main() {
+    try {
+        int arr[MAX_SIZE];
+        int size = InputPositive("Введите размер массива: ", MAX_SIZE);
+        int nRemove = InputPositive("Введите количество минимальных элементов для удаления: ", size);
+
+        FillArray(arr, size);
+        PrintArray(arr, size);
+
+        int product = ProductBetweenMinMax(arr, size);
+        std::cout << "\nПроизведение элементов между min и max: " << product << "\n";
+
+        RemoveNMinElements(arr, size, nRemove);
+        std::cout << "\nМассив после удаления " << nRemove << " минимальных элементов:\n";
+        PrintArray(arr, size);
+
+        SortByAbs(arr, size);
+        std::cout << "\nМассив после сортировки по возрастанию модулей:\n";
+        PrintArray(arr, size);
+    }
+    catch (const std::string& error) {
+        std::cout << error << "\n";
+    }
+    catch (...) {
+        std::cout << "Неизвестная ошибка!\n";
+    }
+
+    return 0;
+}
+
 int myAbs(int x) {
     return (x < 0) ? -x : x;
 }
 
-// Ввод положительного числа с проверками
+// ввод положительного числа с проверкой
 int InputPositive(const char* text, int limit) {
-    long long num;
+    int num;
     std::cout << text;
-    if (!(std::cin >> num)) {
-        std::cerr << "Ошибка: введено не число!" << std::endl;
-        exit(1);
-    }
-    if (num <= 0) {
-        std::cerr << "Ошибка: число должно быть положительным!" << std::endl;
-        exit(2);
-    }
-    if (num > limit) {
-        std::cerr << "Ошибка: число слишком велико!" << std::endl;
-        exit(3);
-    }
-    return static_cast<int>(num);
+
+    if (!(std::cin >> num))
+        throw std::string("Ошибка: введено не число!");
+
+    if (num <= 0)
+        throw std::string("Ошибка: число должно быть положительным!");
+
+    if (num > limit)
+        throw std::string("Ошибка: превышен допустимый размер массива!");
+
+    return num;
 }
 
-// Заполнение массива вручную или случайно
-void FillArray(int* mass, int size) {
+// заполнение массива вручную или случайно
+void FillArray(int* arr, int size) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(-100, 100);
 
     int choice;
     std::cout << "Как заполнить массив? (1 - вручную, 2 - случайными числами): ";
-    if (!(std::cin >> choice)) {
-        std::cerr << "Ошибка: введено не число!" << std::endl;
-        exit(4);
-    }
+
+    if (!(std::cin >> choice))
+        throw std::string("Ошибка: введено не число!");
 
     if (choice == 1) {
         std::cout << "Введите элементы массива:\n";
         for (int i = 0; i < size; ++i) {
-            if (!(std::cin >> mass[i])) {
-                std::cerr << "Ошибка: введено не число!" << std::endl;
-                exit(5);
-            }
+            if (!(std::cin >> arr[i]))
+                throw std::string("Ошибка: введено не число!");
         }
-    } else if (choice == 2) {
+    } 
+    else if (choice == 2) {
         for (int i = 0; i < size; ++i)
-            mass[i] = dist(gen);
-    } else {
-        std::cerr << "Ошибка: неверный выбор!" << std::endl;
-        exit(6);
+            arr[i] = dist(gen);
+    } 
+    else {
+        throw std::string("Ошибка: неверный выбор!");
     }
 }
 
-// Поиск индексов минимального и максимального элементов
-void FindMinMaxIndexes(int* mass, int size, int& minIndex, int& maxIndex) {
+// вывод массива
+void PrintArray(int* arr, int size) {
+    std::cout << "\nМассив: ";
+    for (int i = 0; i < size; ++i)
+        std::cout << arr[i] << " ";
+    std::cout << "\n";
+}
+
+// нахождение индексов минимального и максимального элементов
+void FindMinMaxIndexes(int* arr, int size, int& minIndex, int& maxIndex) {
     minIndex = 0;
     maxIndex = 0;
+
     for (int i = 1; i < size; ++i) {
-        if (mass[i] < mass[minIndex]) minIndex = i;
-        if (mass[i] > mass[maxIndex]) maxIndex = i;
+        if (arr[i] < arr[minIndex])
+            minIndex = i;
+        if (arr[i] > arr[maxIndex])
+            maxIndex = i;
     }
+
+    std::cout << "\nМинимальный элемент: arr[" << minIndex << "] = " << arr[minIndex];
+    std::cout << "\nМаксимальный элемент: arr[" << maxIndex << "] = " << arr[maxIndex] << "\n";
 }
 
-// Произведение элементов между min и max
-int ProductBetweenMinMax(int* mass, int size) {
+// произведение элементов между минимальным и максимальным
+int ProductBetweenMinMax(int* arr, int size) {
     int minIndex, maxIndex;
-    FindMinMaxIndexes(mass, size, minIndex, maxIndex);
+    FindMinMaxIndexes(arr, size, minIndex, maxIndex);
+
     int left = (minIndex < maxIndex) ? minIndex : maxIndex;
     int right = (minIndex > maxIndex) ? minIndex : maxIndex;
 
     if (right - left <= 1)
-        return 0;
+        throw std::string("Ошибка: между min и max нет элементов!");
 
-    int p = 1;
+    int product = 1;
     for (int i = left + 1; i < right; ++i)
-        p *= mass[i];
+        product *= arr[i];
 
-    return p;
+    return product;
 }
 
-// Сортировка пузырьком по модулю
-void SortByAbs(int* mass, int size) {
-    for (int pass = 0; pass < size - 1; ++pass) {
-        for (int i = 0; i < size - 1; ++i) {
-            if (myAbs(mass[i]) > myAbs(mass[i + 1])) {
-                int temp = mass[i];
-                mass[i] = mass[i + 1];
-                mass[i + 1] = temp;
-            }
-        }
-    }
-}
+// удаление N наименьших элементов
+void RemoveNMinElements(int* arr, int& size, int n) {
+    if (n >= size)
+        throw std::string("Ошибка: нельзя удалить больше элементов, чем есть в массиве!");
 
-// Удаление N наименьших элементов
-void RemoveNMinElements(int* mass, int& size, int n) {
-    for (int count = 0; count < n && size > 0; ++count) {
+    for (int count = 0; count < n; ++count) {
         int minIndex = 0;
         for (int i = 1; i < size; ++i)
-            if (mass[i] < mass[minIndex]) minIndex = i;
+            if (arr[i] < arr[minIndex])
+                minIndex = i;
+
         for (int j = minIndex; j < size - 1; ++j)
-            mass[j] = mass[j + 1];
+            arr[j] = arr[j + 1];
         size--;
     }
 }
 
-// Вывод массива
-void PrintArray(int* mass, int size) {
-    std::cout << "\nЧисла в массиве: ";
-    for (int i = 0; i < size; ++i)
-        std::cout << mass[i] << ' ';
-    std::cout << '\n';
-}
-
-int main() {
-    int n = InputPositive("Введите количество минимальных элементов которое надо удалить: ", 1000000);
-    int a = InputPositive("Введите длинну массива: ", 1000000);
-
-    int* mass = new int[a];
-
-    FillArray(mass, a);
-    int p = ProductBetweenMinMax(mass, a);
-    SortByAbs(mass, a);
-    RemoveNMinElements(mass, a, n);
-    PrintArray(mass, a);
-
-    std::cout << "\n" << p << " = Произведение всех элементов массива между минимальным и максимальным членами\n";
-
-    delete[] mass;
-    return 0;
+// сортировка по возрастанию модулей элементов
+void SortByAbs(int* arr, int size) {
+    for (int pass = 0; pass < size - 1; ++pass) {
+        for (int i = 0; i < size - 1; ++i) {
+            if (myAbs(arr[i]) > myAbs(arr[i + 1])) {
+                int tmp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = tmp;
+            }
+        }
+    }
 }

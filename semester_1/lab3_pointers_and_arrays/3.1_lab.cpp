@@ -1,110 +1,177 @@
 #include <iostream>
-#include <random>  
+#include <random>
+#include <string>
 
-int myAbs(int x) {
-    return (x < 0) ? -x : x;
-}
+void AllocateArray(double*& arr, int& number, const std::string& text);
+void FillArray(double* arr, int& number);
+double Abs(double value);
+double SumPositive(double* arr, int number);
+void FindIndexes(double* arr, int number, int& max_index, int& min_index);
+double Product(double* arr, int min_index, int max_index);
+void SortOddDescending(double* arr, int number);
+void PrintArray(double* arr, int number, const std::string& text);
 
-int main () {
+int main() {
+    try {
+        int number;
+        double* arr = nullptr;
+        int max_index = 0, min_index = 0;
 
-    long long a, n, v;
-    std::cout << "Введите n: ";
-    if (!(std::cin >> n)) {                    
-        std::cerr << "Ошибка: введено не число!" << std::endl;
-        return 1;
+        AllocateArray(arr, number, "Enter number of elements in array: ");
+        FillArray(arr, number);
+
+        std::cout << "\nOriginal array:\n";
+        PrintArray(arr, number, "Array: ");
+
+        // Сумма положительных элементов
+        double sum = SumPositive(arr, number);
+        if (sum == 0)
+            throw std::string("There are no positive elements in the array!");
+        else
+            std::cout << "\nSum of positive elements: " << sum << "\n";
+
+        // Индексы первого max по модулю и последнего min по модулю
+        FindIndexes(arr, number, max_index, min_index);
+
+        // Произведение между ними
+        double product = Product(arr, min_index, max_index);
+        std::cout << "Product of elements between first |max| and last |min|: " << product << "\n";
+
+        // Сортировка нечётных индексов по убыванию
+        SortOddDescending(arr, number);
+        std::cout << "\nArray after sorting odd indices (descending):\n";
+        PrintArray(arr, number, "Array: ");
+
+        delete[] arr;
+        arr = nullptr;
+    } 
+    catch (const std::string& error) {
+        std::cout << "Exception caught: " << error << "\n";
     }
-    if (n <= 0) {                              
-        std::cerr << "Ошибка: n должно быть положительным числом!" << std::endl;
-        return 2;
+    catch (...) {
+        std::cout << "Unknown error occurred!\n";
     }
-    if (n > 1000000) {                         
-        std::cerr << "Ошибка: n слишком велико!" << std::endl;
-        return 3;
-    }
-
-    std::cout << "Введите a: ";
-    if (!(std::cin >> a)) {                   
-        std::cerr << "Ошибка: введено не число!" << std::endl;
-        return 4;
-    }
-    if (a <= 0) {                              
-        std::cerr << "Ошибка: a должно быть положительным числом!" << std::endl;
-        return 5;
-    }
-    if (a > 1000000) {                         
-        std::cerr << "Ошибка: a слишком велико!" << std::endl;
-        return 6;
-    }
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(-100, 100);
-
-        int* mass = new int[a];
-
-        int choice;
-        std::cout << "Как заполнить массив? (1 - вручную, 2 - случайными числами): ";
-        std::cin >> choice;
-
-        if (choice == 1) {
-            std::cout << "Введите данные в массив: ";
-            for (int i = 0; i < a; ++i) {
-                std::cin >> mass[i];
-            }
-        } else if (choice == 2) {
-            for (int i = 0; i < a; ++i) {
-                mass[i] = dist(gen); 
-            }
-        }
-
-        int minIndex = 0, maxIndex = 0;
-            for (int i = 1; i < a; i++) {
-                if (mass[i] < mass[minIndex]) minIndex = i;
-                if (mass[i] > mass[maxIndex]) maxIndex = i;
-            }
-        int left  = (minIndex < maxIndex) ? minIndex : maxIndex;
-        int right = (minIndex > maxIndex) ? minIndex : maxIndex;
-
-        int p = 1;
-        if (right - left > 1) { 
-            for (int i = left + 1; i < right; i++) {
-                p *= mass[i];
-            }
-        } 
-        else {
-            p = 0; 
-        }
-
-        for (int pass = 0; pass < a - 1; pass++) {
-            for (int i = 0; i < a - 1; i++) {
-                if (myAbs(mass[i]) > myAbs(mass[i + 1])) {
-                    int temp = mass[i];
-                    mass[i] = mass[i + 1];
-                    mass [i + 1] = temp;
-                }
-            }
-        }
-
-        for (int count = 0; count < n; ++count) {
-            int minIndex = 0;
-            for (int i = 1; i < a; i++) {
-                if (mass[i] < mass[minIndex]) {
-                    minIndex = i;
-                }
-            }
-            for (int j = minIndex; j < a - 1; j++) {
-                mass[j] = mass[j + 1];
-            }
-            a--;
-            
-        }
-        for (int i = 0; i < a; ++i) {
-                std::cout << "Числа в массиве: " << mass[i] << '\n';
-        }
-
-        std::cout << p << " = Произведение всех элементов массива между минимальным и максимальными членами";
-        delete[] mass;
-    
 
     return 0;
+}
+
+void AllocateArray(double*& arr, int& number, const std::string& text) {
+    std::cout << text;
+    std::cin >> number;
+
+    if (!std::cin || number <= 0)
+        throw std::string("Error! Invalid array size!");
+
+    arr = new double[number];
+}
+
+void FillArray(double* arr, int& number) {
+    std::cout << "Choose input method:\n1 - Manual input\n2 - Random generation\nYour choice: ";
+    int choice;
+    std::cin >> choice;
+
+    if (choice == 1) {
+        for (int i = 0; i < number; ++i) {
+            std::cout << "Enter element [" << i + 1 << "]: ";
+            std::cin >> arr[i];
+            if (!std::cin)
+                throw std::string("Error! Invalid number entered!");
+        }
+    } else if (choice == 2) {
+        double min_val, max_val;
+        std::cout << "Enter range for random values (min max): ";
+        std::cin >> min_val >> max_val;
+
+        if (!std::cin || min_val > max_val)
+            throw std::string("Error! Invalid range!");
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dist(min_val, max_val);
+
+        for (int i = 0; i < number; ++i)
+            arr[i] = dist(gen);
+
+        std::cout << "\nRandomly generated array:\n";
+        PrintArray(arr, number, "Array: ");
+    } else {
+        throw std::string("Invalid choice! Must be 1 or 2.");
+    }
+}
+
+double Abs(double value) {
+    return value >= 0 ? value : -value;
+}
+
+double SumPositive(double* arr, int number) {
+    double sum = 0;
+    for (int i = 0; i < number; ++i)
+        if (arr[i] > 0)
+            sum += arr[i];
+    return sum;
+}
+
+void FindIndexes(double* arr, int number, int& max_index, int& min_index) {
+    double max_val = Abs(arr[0]);
+    double min_val = Abs(arr[0]);
+    max_index = 0;
+    min_index = 0;
+
+    for (int i = 1; i < number; ++i) {
+        if (Abs(arr[i]) > max_val) {
+            max_val = Abs(arr[i]);
+            max_index = i;
+        }
+    }
+
+    for (int i = 0; i < number; ++i) {
+        if (Abs(arr[i]) <= min_val) {
+            min_val = Abs(arr[i]);
+            min_index = i;
+        }
+    }
+
+    std::cout << "\nFirst max element index: " << max_index
+              << " (value = " << arr[max_index] << ")";
+    std::cout << "\nLast min element index: " << min_index
+              << " (value = " << arr[min_index] << ")\n";
+
+    if (max_index == min_index)
+        throw std::string("Max and min absolute values are at the same position!");
+}
+
+double Product(double* arr, int min_index, int max_index) {
+    if (min_index > max_index) {
+        int tmp = min_index;
+        min_index = max_index;
+        max_index = tmp;
+    }
+
+    if ((max_index - min_index) < 2)
+        throw std::string("There is less than one element between max and min!");
+
+    double product = 1.0;
+    for (int i = min_index + 1; i < max_index; ++i)
+        product *= arr[i];
+
+    return product;
+}
+
+void SortOddDescending(double* arr, int number) {
+    for (int i = 1; i < number; i += 2) {
+        for (int j = i + 2; j < number; j += 2) {
+            if (arr[i] < arr[j]) {
+                double tmp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = tmp;
+            }
+        }
+    }
+}
+
+void PrintArray(double* arr, int number, const std::string& text) {
+    std::cout << text << " ";
+    for (int i = 0; i < number; ++i)
+        std::cout << arr[i] << " ";
+    std::cout << "\n";
 }
