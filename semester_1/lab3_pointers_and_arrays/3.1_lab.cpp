@@ -24,11 +24,8 @@ int main() {
         PrintArray(arr, number, "Array: ");
 
         // Сумма положительных элементов
-        double sum = SumPositive(arr, number);
-        if (sum == 0)
-            throw std::string("There are no positive elements in the array!");
-        else
-            std::cout << "\nSum of positive elements: " << sum << "\n";
+        double sum;
+        std::cout << "\nSum of positive elements: " << SumPositive(arr, number)<< "\n";
 
         // Индексы первого max по модулю и последнего min по модулю
         FindIndexes(arr, number, max_index, min_index);
@@ -56,13 +53,17 @@ int main() {
 }
 
 void AllocateArray(double*& arr, int& number, const std::string& text) {
-    std::cout << text;
-    std::cin >> number;
+    try {
+        std::cout << text;
+        std::cin >> number;
 
-    if (!std::cin || number <= 0)
-        throw std::string("Error! Invalid array size!");
+        if (!std::cin || number <= 0)
+            throw std::string("Error! Invalid array size!");
 
-    arr = new double[number];
+        arr = new double[number];
+    } catch (std::string text) {
+    std::cout << text << "\n";
+    }
 }
 
 void FillArray(double* arr, int& number) {
@@ -70,32 +71,37 @@ void FillArray(double* arr, int& number) {
     int choice;
     std::cin >> choice;
 
-    if (choice == 1) {
-        for (int i = 0; i < number; ++i) {
-            std::cout << "Enter element [" << i + 1 << "]: ";
-            std::cin >> arr[i];
-            if (!std::cin)
-                throw std::string("Error! Invalid number entered!");
+    try {
+        if (choice == 1) {
+            for (int i = 0; i < number; ++i) {
+                std::cout << "Enter element [" << i + 1 << "]: ";
+                std::cin >> arr[i];
+                if (!std::cin)
+                    throw std::string("Error! Invalid number entered!");
+            }
+        } else if (choice == 2) {
+            double min_val, max_val;
+            std::cout << "Enter range for random values (min max): ";
+            std::cin >> min_val >> max_val;
+
+            if (!std::cin || min_val > max_val) {
+                throw std::string("Error! Invalid range!");
+            }
+
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dist(min_val, max_val);
+
+            for (int i = 0; i < number; ++i)
+                arr[i] = dist(gen);
+
+            std::cout << "\nRandomly generated array:\n";
+            PrintArray(arr, number, "Array: ");
+        } else {
+            throw std::string("Invalid choice! Must be 1 or 2.");
         }
-    } else if (choice == 2) {
-        double min_val, max_val;
-        std::cout << "Enter range for random values (min max): ";
-        std::cin >> min_val >> max_val;
-
-        if (!std::cin || min_val > max_val)
-            throw std::string("Error! Invalid range!");
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dist(min_val, max_val);
-
-        for (int i = 0; i < number; ++i)
-            arr[i] = dist(gen);
-
-        std::cout << "\nRandomly generated array:\n";
-        PrintArray(arr, number, "Array: ");
-    } else {
-        throw std::string("Invalid choice! Must be 1 or 2.");
+    } catch (std::string text) {
+        std::cout << text << "\n";
     }
 }
 
@@ -105,9 +111,13 @@ double Abs(double value) {
 
 double SumPositive(double* arr, int number) {
     double sum = 0;
-    for (int i = 0; i < number; ++i)
-        if (arr[i] > 0)
-            sum += arr[i];
+    try {
+        for (int i = 0; i < number; ++i)
+            if (arr[i] > 0)
+                sum += arr[i];
+    } catch (std::string text) {
+        std::cout << text << "\n";
+    }
     return sum;
 }
 
@@ -116,28 +126,31 @@ void FindIndexes(double* arr, int number, int& max_index, int& min_index) {
     double min_val = Abs(arr[0]);
     max_index = 0;
     min_index = 0;
-
-    for (int i = 1; i < number; ++i) {
-        if (Abs(arr[i]) > max_val) {
-            max_val = Abs(arr[i]);
-            max_index = i;
+    try {
+        for (int i = 1; i < number; ++i) {
+            if (Abs(arr[i]) > max_val) {
+                max_val = Abs(arr[i]);
+                max_index = i;
+            }
         }
-    }
 
-    for (int i = 0; i < number; ++i) {
-        if (Abs(arr[i]) <= min_val) {
-            min_val = Abs(arr[i]);
-            min_index = i;
+        for (int i = 0; i < number; ++i) {
+            if (Abs(arr[i]) <= min_val) {
+                min_val = Abs(arr[i]);
+                min_index = i;
+            }
         }
+
+        std::cout << "\nFirst max element index: " << max_index
+                << " (value = " << arr[max_index] << ")";
+        std::cout << "\nLast min element index: " << min_index
+                << " (value = " << arr[min_index] << ")\n";
+
+        if (max_index == min_index)
+            throw std::string("Max and min absolute values are at the same position!");
+    } catch (std::string text) {
+        std::cout << text << "\n";
     }
-
-    std::cout << "\nFirst max element index: " << max_index
-              << " (value = " << arr[max_index] << ")";
-    std::cout << "\nLast min element index: " << min_index
-              << " (value = " << arr[min_index] << ")\n";
-
-    if (max_index == min_index)
-        throw std::string("Max and min absolute values are at the same position!");
 }
 
 double Product(double* arr, int min_index, int max_index) {
