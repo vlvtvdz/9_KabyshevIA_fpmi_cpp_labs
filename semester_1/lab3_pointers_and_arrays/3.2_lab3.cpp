@@ -3,21 +3,13 @@
 #include <string>
 
 int myAbs(int x);
-
 int InputPositive(const char* text, int limit);
-
 void FillArray(int* arr, int size);
-
 void PrintArray(int* arr, int size);
-
 void FindMinMaxIndexes(int* arr, int size, int& minIndex, int& maxIndex);
-
 int ProductBetweenMinMax(int* arr, int size);
-
 void RemoveNMinElements(int* arr, int& size, int n);
-
 void SortByAbs(int* arr, int size);
-
 const int MAX_SIZE = 1000; // ограничение для статического массива
 
 
@@ -30,12 +22,19 @@ int main() {
         FillArray(arr, size);
         PrintArray(arr, size);
 
-        int product = ProductBetweenMinMax(arr, size);
-        std::cout << "\nПроизведение элементов между min и max: " << product << "\n";
-
-        RemoveNMinElements(arr, size, nRemove);
-        std::cout << "\nМассив после удаления " << nRemove << " минимальных элементов:\n";
-        PrintArray(arr, size);
+        try {
+            int product = ProductBetweenMinMax(arr, size);
+            std::cout << "\nПроизведение элементов между min и max: " << product << "\n";
+        } catch (const std::string& text) {
+            std::cout << text << "\n";
+        }
+        try {
+            RemoveNMinElements(arr, size, nRemove);
+            std::cout << "\nМассив после удаления " << nRemove << " минимальных элементов:\n";
+            PrintArray(arr, size);
+        } catch (const std::string& text) {
+            std::cout << text << "\n";
+        }
 
         SortByAbs(arr, size);
         std::cout << "\nМассив после сортировки по возрастанию модулей:\n";
@@ -78,25 +77,31 @@ void FillArray(int* arr, int size) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(-100, 100);
 
-    int choice;
-    std::cout << "Как заполнить массив? (1 - вручную, 2 - случайными числами): ";
+    try {
+        int choice;
+        std::cout << "Как заполнить массив? (1 - вручную, 2 - случайными числами): ";
 
-    if (!(std::cin >> choice))
-        throw std::string("Ошибка: введено не число!");
+        if (!(std::cin >> choice))
+            throw std::string("Ошибка: введено не число!");
 
-    if (choice == 1) {
-        std::cout << "Введите элементы массива:\n";
-        for (int i = 0; i < size; ++i) {
-            if (!(std::cin >> arr[i]))
-                throw std::string("Ошибка: введено не число!");
+        if (choice == 1) {
+            std::cout << "Введите элементы массива:\n";
+            for (int i = 0; i < size; ++i) {
+                if (!(std::cin >> arr[i]))
+                    throw std::string("Ошибка: введено не число!");
+            }
+        } 
+        else if (choice == 2) {
+            for (int i = 0; i < size; ++i)
+                arr[i] = dist(gen);
+        }          
+
+        else {
+            throw std::string("Ошибка: неверный выбор!");
         }
-    } 
-    else if (choice == 2) {
-        for (int i = 0; i < size; ++i)
-            arr[i] = dist(gen);
-    } 
-    else {
-        throw std::string("Ошибка: неверный выбор!");
+    } catch (const std::string& text) {
+        std::cout << text << "\n";
+        exit (1);
     }
 }
 
@@ -126,16 +131,17 @@ void FindMinMaxIndexes(int* arr, int size, int& minIndex, int& maxIndex) {
 
 // произведение элементов между минимальным и максимальным
 int ProductBetweenMinMax(int* arr, int size) {
+    int product = 1;
+
     int minIndex, maxIndex;
     FindMinMaxIndexes(arr, size, minIndex, maxIndex);
 
     int left = (minIndex < maxIndex) ? minIndex : maxIndex;
     int right = (minIndex > maxIndex) ? minIndex : maxIndex;
-
+    
     if (right - left <= 1)
         throw std::string("Ошибка: между min и max нет элементов!");
 
-    int product = 1;
     for (int i = left + 1; i < right; ++i)
         product *= arr[i];
 
@@ -156,18 +162,26 @@ void RemoveNMinElements(int* arr, int& size, int n) {
         for (int j = minIndex; j < size - 1; ++j)
             arr[j] = arr[j + 1];
         size--;
-    }
+    } 
 }
 
 // сортировка по возрастанию модулей элементов
 void SortByAbs(int* arr, int size) {
+    int Sort = 0;
+
     for (int pass = 0; pass < size - 1; ++pass) {
         for (int i = 0; i < size - 1; ++i) {
             if (myAbs(arr[i]) > myAbs(arr[i + 1])) {
                 int tmp = arr[i];
                 arr[i] = arr[i + 1];
                 arr[i + 1] = tmp;
+                Sort += 1;
             }
         }
     }
+
+    if (Sort == 0) {
+        std::cout << "There are nothing to sort \n";
+    }
+
 }
