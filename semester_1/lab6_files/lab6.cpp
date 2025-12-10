@@ -1,67 +1,73 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 
-struct LineInfo {
-    int lineNumber;
-    std::string text;
-    int maxPunctLen;
-};
-
-bool isPunctuation(char c, const std::string &punctuation) {
-    return punctuation.find(c) != std::string::npos;
-}
+int AmountWords(std::string line, std::string& delim);
 
 int main() {
-    std::string punctuation;
-    std::cout << "Введите знаки препинания: ";
-    std::getline(std::cin, punctuation);
-
-    std::ifstream file("input.txt");
-    if (!file.is_open()) {
-        std::cerr << "Ошибка: не удалось открыть файл input.txt\n";
+    std::string delim;
+    try{
+        std::ifstream in("in.txt");
+        if (!in.is_open()) {
+            std::cerr << "Cannot open file in.txt" << std::endl;
+            return 1;
+        }
+        std::cout << "Enter your delimetres: ";
+        std::getline(std::cin, delim);
+        int maxsize = 0;
+        std::string line;
+        std::vector<std::string> lines;
+        while (std::getline(in, line)) {
+            int tmp = AmountWords(line, delim);
+            if (tmp > maxsize){
+                    lines.clear();
+                    maxsize = tmp;
+                    lines.push_back(line);
+            }   
+            else if (tmp == maxsize){
+                lines.push_back(line);
+                }
+        }
+        int Size = lines.size();
+        for (int i = 0; i < Size; ++i) {
+            std::cout << "Lines " << i + 1 << " " << lines[i] << std::endl;
+        }
+        std::cout << "Max number of consecutive delimiters: " << maxsize << std::endl;
+        in.close();
+        return 0;
+    } catch (std::string msg) { 
+        std::cerr << msg;
         return 1;
     }
-
-    std::vector<LineInfo> lines;
-    std::string line;
-    int lineNumber = 0;
-
-    while (std::getline(file, line)) {
-        lineNumber++;
-        int maxLen = 0, currentLen = 0;
-
-        for (char c : line) {
-            if (isPunctuation(c, punctuation)) {
-                currentLen++;
-                maxLen = std::max(maxLen, currentLen);
-            } else {
-                currentLen = 0;
-            }
-        }
-
-        lines.push_back({lineNumber, line, maxLen});
-    }
-
-    file.close();
-
-    int globalMax = 0;
-    for (const auto &l : lines)
-        globalMax = std::max(globalMax, l.maxPunctLen);
-
-    std::vector<LineInfo> result;
-    for (const auto &l : lines)
-        if (l.maxPunctLen == globalMax)
-            result.push_back(l);
-
-    std::cout << "\nСтроки с максимальной последовательностью знаков препинания ("
-              << globalMax << " символов):\n\n";
-
-    for (size_t i = 0; i < std::min<size_t>(10, result.size()); ++i)
-        std::cout << "Строка " << result[i].lineNumber << ": "
-                  << result[i].text << "\n";
-
-    return 0;
+    
 }
+
+
+int AmountWords(std::string line, std::string& delim) {
+    int maxConsecutive = 0;
+    size_t pos = 0;
+    
+    while (pos < line.length()) {
+        size_t first = line.find_first_of(delim, pos);
+        
+        if (first == std::string::npos) {
+            break;
+        }
+        
+        size_t last = line.find_first_not_of(delim, first);
+        
+        if (last == std::string::npos) {
+            break;
+        }
+        
+        int distance = last - first;
+        maxConsecutive = std::max(maxConsecutive, distance);
+        
+        pos = last;
+    }
+    
+    return maxConsecutive;
+}
+
