@@ -14,6 +14,11 @@ int main() {
             std::cerr << "Cannot open file in.txt" << std::endl;
             return 1;
         }
+
+        if (in.eof()) {
+            throw std::string("File is empty\n");
+        }
+
         std::cout << "Enter your delimetres: ";
         std::getline(std::cin, delim);
         int maxsize = 0;

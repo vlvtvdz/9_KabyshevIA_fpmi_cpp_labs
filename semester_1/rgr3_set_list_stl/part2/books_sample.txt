@@ -1,0 +1,4 @@
+# Format: UDK;Title;Year;Author1|Author2|...
+512;Algorithms Illuminated;2020;Kleinberg Jon|Tardos Eva
+821;War and Peace;1869;Tolstoy Leo
+53;The Elegant Universe;1999;Greene Brian

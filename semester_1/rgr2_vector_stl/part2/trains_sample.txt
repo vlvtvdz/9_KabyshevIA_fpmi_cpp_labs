@@ -1,0 +1,6 @@
+# Format: id;type;destination;dispatch(HH:MM);travel(HH:MM)
+101;PASSENGER;Moscow;08:15;05:30
+205;FREIGHT;Saint Petersburg;10:45;12:15
+309;HIGH_SPEED;Kazan;06:50;07:10
+412;SUBWAY;Depot;05:05;00:55
+518;SPECIALIZED;Murmansk;23:10;18:45

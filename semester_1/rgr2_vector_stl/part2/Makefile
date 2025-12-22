@@ -1,3 +1,3 @@
 part2:
-	g++ -Wall -Wextra -fsanitize=address,undefined,leak time_utility.cpp main.cpp -o main.out
+	g++ -std=c++17 -Wall -Wextra -pedantic -fsanitize=address,undefined time_utility.cpp main.cpp -o main.out
 	./main.out
